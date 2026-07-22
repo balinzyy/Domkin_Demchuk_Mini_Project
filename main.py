@@ -1,5 +1,9 @@
+from unittest import skip
+
 import numpy as np
 from datafile import cleaned_data
+import matplotlib.pyplot as plt
+import pandas as pd
 
 cleaned_data['FastMA'] = cleaned_data['Close'].rolling(window=10).mean()
 cleaned_data['SlowMA'] = cleaned_data['Close'].rolling(window=100).mean()
@@ -16,5 +20,18 @@ signals = ["Buy", "Sell"]
 
 cleaned_data["Signal"] = np.select(conds, signals, default="---")
 
-print(cleaned_data.to_string())
+#print(cleaned_data.to_string())
+first_index = cleaned_data[cleaned_data["Signal"] == "---"].index[0]
+cleaned_data.loc[first_index, "Signal"] = "Buy"
+buy_sell_df = cleaned_data[cleaned_data["Signal"] != "---"]
+print(buy_sell_df)
+
+total_buy = cleaned_data[cleaned_data["Signal"]=="Buy"]["Close"].sum()
+
+
+total_sell = cleaned_data[cleaned_data["Signal"]=="Sell"]["Close"].sum()
+
+total_pnl = total_sell - total_buy
+clean_pnl = total_pnl.item()
+print(f"{clean_pnl:.2f} $")
 
