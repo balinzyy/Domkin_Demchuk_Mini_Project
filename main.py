@@ -18,7 +18,7 @@ def trade(balance):
 
     return final_balance
 
-cleaned_data['FastMA'] = cleaned_data['Close'].rolling(window=10).mean()
+cleaned_data['FastMA'] = cleaned_data['Close'].rolling(window=20).mean()
 cleaned_data['SlowMA'] = cleaned_data['Close'].rolling(window=100).mean()
 cleaned_data['VolumeMA'] = cleaned_data['Volume'].rolling(window=20).mean()
 
@@ -33,6 +33,8 @@ conds = [(today_signal & yesterday_signal), (~today_signal & ~yesterday_signal)]
 signals = ["Buy", "Sell"]
 
 cleaned_data["Signal"] = np.select(conds, signals, default="---")
+
+
 
 summ = int(input("How much money do you want to invest? : "))
 print(f"Balance after the selected period is {trade(summ):.2f}$. \nYour {"profit is" if trade(summ)-summ > 0 else "losses are"} {(trade(summ)-summ):.2f}$" )
