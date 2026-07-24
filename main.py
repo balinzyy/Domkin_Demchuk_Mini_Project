@@ -16,6 +16,7 @@ def trade(balance):
     else:
         final_balance = balance
 
+
     return final_balance
 
 cleaned_data['FastMA'] = cleaned_data['Close'].rolling(window=20).mean()
@@ -36,7 +37,7 @@ cleaned_data["Signal"] = np.select(conds, signals, default="---")
 
 
 
-summ = int(input("How much money do you want to invest? : "))
+summ = int(input("How much money do you want to invest?: "))
 print(f"Balance after the selected period is {trade(summ):.2f}$. \nYour {"profit is" if trade(summ)-summ > 0 else "losses are"} {(trade(summ)-summ):.2f}$" )
 
 
