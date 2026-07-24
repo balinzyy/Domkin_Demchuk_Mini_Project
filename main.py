@@ -1,14 +1,29 @@
-from unittest import skip
-
 import numpy as np
 from datafile import cleaned_data
-import matplotlib.pyplot as plt
-import pandas as pd
 
-cleaned_data['FastMA'] = cleaned_data['Close'].rolling(window=10).mean()
+
+def trade(balance):
+    amount = balance/cleaned_data.iloc[0]["Close"]
+    for i in range(cleaned_data.shape[0]):
+        if cleaned_data.iloc[i]["Signal"] == "Buy":
+            amount = balance/cleaned_data.iloc[i]["Close"]
+        elif cleaned_data.iloc[i]["Signal"] == "Sell":
+            balance = amount*cleaned_data.iloc[i]["Close"]
+            amount = 0
+
+    if amount > 0:
+        final_balance = amount*cleaned_data.iloc[-1]["Close"]
+    else:
+        final_balance = balance
+
+
+    return final_balance
+
+cleaned_data['FastMA'] = cleaned_data['Close'].rolling(window=20).mean()
 cleaned_data['SlowMA'] = cleaned_data['Close'].rolling(window=100).mean()
 cleaned_data['VolumeMA'] = cleaned_data['Volume'].rolling(window=20).mean()
 
+cleaned_data.columns = cleaned_data.columns.get_level_values(0)
 cleaned_data = cleaned_data.dropna()
 
 
@@ -20,18 +35,10 @@ signals = ["Buy", "Sell"]
 
 cleaned_data["Signal"] = np.select(conds, signals, default="---")
 
-#print(cleaned_data.to_string())
-first_index = cleaned_data[cleaned_data["Signal"] == "---"].index[0]
-cleaned_data.loc[first_index, "Signal"] = "Buy"
-buy_sell_df = cleaned_data[cleaned_data["Signal"] != "---"]
-print(buy_sell_df)
-
-total_buy = cleaned_data[cleaned_data["Signal"]=="Buy"]["Close"].sum()
 
 
-total_sell = cleaned_data[cleaned_data["Signal"]=="Sell"]["Close"].sum()
+summ = int(input("How much money do you want to invest?: "))
+print(f"Balance after the selected period is {trade(summ):.2f}$. \nYour {"profit is" if trade(summ)-summ > 0 else "losses are"} {(trade(summ)-summ):.2f}$" )
 
-total_pnl = total_sell - total_buy
-clean_pnl = total_pnl.item()
-print(f"{clean_pnl:.2f} $")
+
 
