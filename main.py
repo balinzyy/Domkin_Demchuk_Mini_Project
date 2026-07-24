@@ -16,6 +16,7 @@ def trade(balance):
     else:
         final_balance = balance
 
+
     return final_balance
 
 cleaned_data['FastMA'] = cleaned_data['Close'].rolling(window=20).mean()
