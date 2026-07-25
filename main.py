@@ -3,11 +3,12 @@ from datafile import cleaned_data
 
 
 def trade(balance):
-    amount = balance/cleaned_data.iloc[0]["Close"]
+    first = True
     for i in range(cleaned_data.shape[0]):
         if cleaned_data.iloc[i]["Signal"] == "Buy":
             amount = balance/cleaned_data.iloc[i]["Close"]
-        elif cleaned_data.iloc[i]["Signal"] == "Sell":
+            first = False
+        elif cleaned_data.iloc[i]["Signal"] == "Sell" and not first:
             balance = amount*cleaned_data.iloc[i]["Close"]
             amount = 0
 
@@ -39,6 +40,7 @@ cleaned_data["Signal"] = np.select(conds, signals, default="---")
 
 summ = int(input("How much money do you want to invest?: "))
 print(f"Balance after the selected period is {trade(summ):.2f}$. \nYour {"profit is" if trade(summ)-summ > 0 else "losses are"} {(trade(summ)-summ):.2f}$" )
+
 
 
 
